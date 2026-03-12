@@ -53,5 +53,15 @@ export default {
       label: { en: 'On Error' },
       event: { message: '' },
     },
+    {
+      name: 'digest:saved',
+      label: { en: 'On Digest Setting Saved' },
+      event: { key: '', value: '' },
+    },
+    {
+      name: 'digest:error',
+      label: { en: 'On Digest Error' },
+      event: { message: '' },
+    },
   ],
 };

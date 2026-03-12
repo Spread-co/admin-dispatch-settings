@@ -155,6 +155,135 @@
             Next cycle is overridden to {{ formatDate(form.next_cycle_override) }}
           </div>
         </div>
+
+        <!-- ── Card 4: Digest Notifications ─────────────────────────── -->
+        <div class="spread-ds__card spread-ds__card--full">
+          <h3 class="spread-ds__card-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Digest Notifications
+          </h3>
+          <p class="spread-ds__card-desc">Enable automated order digest emails. Each period sends to Make via its own webhook. Only periods with a configured webhook will actually dispatch.</p>
+
+          <!-- Error (digest-scoped) -->
+          <div v-if="digestError" class="spread-ds__error" role="alert">
+            {{ digestError }}
+          </div>
+
+          <!-- Daily -->
+          <div class="spread-ds__digest-row">
+            <div class="spread-ds__digest-row-left">
+              <label class="spread-ds__toggle-wrap" :for="'toggle-daily'" :aria-label="'Enable daily digest'">
+                <input
+                  id="toggle-daily"
+                  type="checkbox"
+                  class="spread-ds__toggle-input"
+                  :checked="digestForm.daily_enabled"
+                  :disabled="!canEdit || savingKey === 'digest.daily_enabled'"
+                  @change="saveDigestSetting('digest.daily_enabled', $event.target.checked)"
+                />
+                <span class="spread-ds__toggle-pill"></span>
+              </label>
+              <div class="spread-ds__digest-label">
+                <span class="spread-ds__digest-period">Daily</span>
+                <span class="spread-ds__digest-hint">08:00 AEST every morning</span>
+              </div>
+            </div>
+            <div v-if="savingKey === 'digest.daily_enabled'" class="spread-ds__inline-spinner"></div>
+          </div>
+          <div class="spread-ds__digest-webhook" v-if="digestForm.daily_enabled">
+            <label class="spread-ds__label" for="webhook-daily">Make webhook URL (daily)</label>
+            <div class="spread-ds__input-row">
+              <input
+                id="webhook-daily"
+                class="spread-ds__input"
+                type="url"
+                placeholder="https://hook.eu2.make.com/…"
+                v-model="digestForm.webhook_daily"
+                :disabled="!canEdit"
+                @blur="saveDigestSetting('notif_webhook_order_digest', digestForm.webhook_daily)"
+              />
+              <div v-if="savingKey === 'notif_webhook_order_digest'" class="spread-ds__inline-spinner"></div>
+            </div>
+            <p v-if="digestSettings['notif_webhook_order_digest']" class="spread-ds__field-hint">Last updated: {{ formatTs(digestSettings['notif_webhook_order_digest']?.updated_at) }}</p>
+          </div>
+
+          <!-- Weekly -->
+          <div class="spread-ds__digest-row">
+            <div class="spread-ds__digest-row-left">
+              <label class="spread-ds__toggle-wrap" :for="'toggle-weekly'" :aria-label="'Enable weekly digest'">
+                <input
+                  id="toggle-weekly"
+                  type="checkbox"
+                  class="spread-ds__toggle-input"
+                  :checked="digestForm.weekly_enabled"
+                  :disabled="!canEdit || savingKey === 'digest.weekly_enabled'"
+                  @change="saveDigestSetting('digest.weekly_enabled', $event.target.checked)"
+                />
+                <span class="spread-ds__toggle-pill"></span>
+              </label>
+              <div class="spread-ds__digest-label">
+                <span class="spread-ds__digest-period">Weekly</span>
+                <span class="spread-ds__digest-hint">Monday 08:00 AEST — covers prior Mon–Sun</span>
+              </div>
+            </div>
+            <div v-if="savingKey === 'digest.weekly_enabled'" class="spread-ds__inline-spinner"></div>
+          </div>
+          <div class="spread-ds__digest-webhook" v-if="digestForm.weekly_enabled">
+            <label class="spread-ds__label" for="webhook-weekly">Make webhook URL (weekly)</label>
+            <div class="spread-ds__input-row">
+              <input
+                id="webhook-weekly"
+                class="spread-ds__input"
+                type="url"
+                placeholder="https://hook.eu2.make.com/…"
+                v-model="digestForm.webhook_weekly"
+                :disabled="!canEdit"
+                @blur="saveDigestSetting('notif_webhook_weekly_digest', digestForm.webhook_weekly)"
+              />
+              <div v-if="savingKey === 'notif_webhook_weekly_digest'" class="spread-ds__inline-spinner"></div>
+            </div>
+            <p v-if="digestSettings['notif_webhook_weekly_digest']" class="spread-ds__field-hint">Last updated: {{ formatTs(digestSettings['notif_webhook_weekly_digest']?.updated_at) }}</p>
+          </div>
+
+          <!-- Monthly -->
+          <div class="spread-ds__digest-row">
+            <div class="spread-ds__digest-row-left">
+              <label class="spread-ds__toggle-wrap" :for="'toggle-monthly'" :aria-label="'Enable monthly digest'">
+                <input
+                  id="toggle-monthly"
+                  type="checkbox"
+                  class="spread-ds__toggle-input"
+                  :checked="digestForm.monthly_enabled"
+                  :disabled="!canEdit || savingKey === 'digest.monthly_enabled'"
+                  @change="saveDigestSetting('digest.monthly_enabled', $event.target.checked)"
+                />
+                <span class="spread-ds__toggle-pill"></span>
+              </label>
+              <div class="spread-ds__digest-label">
+                <span class="spread-ds__digest-period">Monthly</span>
+                <span class="spread-ds__digest-hint">2nd of month 08:00 AEST — covers prior calendar month</span>
+              </div>
+            </div>
+            <div v-if="savingKey === 'digest.monthly_enabled'" class="spread-ds__inline-spinner"></div>
+          </div>
+          <div class="spread-ds__digest-webhook" v-if="digestForm.monthly_enabled">
+            <label class="spread-ds__label" for="webhook-monthly">Make webhook URL (monthly)</label>
+            <div class="spread-ds__input-row">
+              <input
+                id="webhook-monthly"
+                class="spread-ds__input"
+                type="url"
+                placeholder="https://hook.eu2.make.com/…"
+                v-model="digestForm.webhook_monthly"
+                :disabled="!canEdit"
+                @blur="saveDigestSetting('notif_webhook_monthly_digest', digestForm.webhook_monthly)"
+              />
+              <div v-if="savingKey === 'notif_webhook_monthly_digest'" class="spread-ds__inline-spinner"></div>
+            </div>
+            <p v-if="digestSettings['notif_webhook_monthly_digest']" class="spread-ds__field-hint">Last updated: {{ formatTs(digestSettings['notif_webhook_monthly_digest']?.updated_at) }}</p>
+          </div>
+        </div>
+
       </div>
     </template>
   </div>
@@ -167,6 +296,14 @@ const MOCK_SETTINGS = {
   'dispatch.cutoff_hours':         { value: 48,          updated_at: new Date().toISOString() },
   'dispatch.message':              { value: "Your Spread order is on its way! 🚚", updated_at: new Date().toISOString() },
   'dispatch.next_cycle_override':  { value: null,        updated_at: new Date().toISOString() },
+};
+const MOCK_DIGEST_SETTINGS = {
+  'digest.daily_enabled':           { value: true,  updated_at: new Date().toISOString() },
+  'digest.weekly_enabled':          { value: false, updated_at: new Date().toISOString() },
+  'digest.monthly_enabled':         { value: false, updated_at: new Date().toISOString() },
+  'notif_webhook_order_digest':     { value: '',    updated_at: new Date().toISOString() },
+  'notif_webhook_weekly_digest':    { value: '',    updated_at: new Date().toISOString() },
+  'notif_webhook_monthly_digest':   { value: '',    updated_at: new Date().toISOString() },
 };
 const DAYS = [
   { value: 'monday',    short: 'Mon' },
@@ -205,18 +342,29 @@ export default {
   data() {
     return {
       DAYS,
-      loading:    false,
-      canEdit:    false,
-      error:      null,
-      toast:      null,
+      loading:     false,
+      canEdit:     false,
+      error:       null,
+      toast:       null,
       _toastTimer: null,
-      savingKey:  null,
-      settings:   {},
+      savingKey:   null,
+      settings:    {},
       form: {
         day_of_week:         'wednesday',
         cutoff_hours:        48,
         dispatch_message:    '',
         next_cycle_override: '',
+      },
+      // Digest notification settings
+      digestSettings:  {},
+      digestError:     null,
+      digestForm: {
+        daily_enabled:   true,
+        weekly_enabled:  false,
+        monthly_enabled: false,
+        webhook_daily:   '',
+        webhook_weekly:  '',
+        webhook_monthly: '',
       },
     };
   },
@@ -241,9 +389,11 @@ export default {
   mounted() {
     /* wwEditor:start */
     if (this.isEditorMode) {
-      this.settings  = MOCK_SETTINGS;
-      this.canEdit   = true;
+      this.settings        = MOCK_SETTINGS;
+      this.digestSettings  = MOCK_DIGEST_SETTINGS;
+      this.canEdit         = true;
       this.applyToForm(MOCK_SETTINGS);
+      this.applyDigestToForm(MOCK_DIGEST_SETTINGS);
       return;
     }
     /* wwEditor:end */
@@ -260,9 +410,10 @@ export default {
       this.loading = true;
       this.error   = null;
       const c = this.client();
-      const [settingsRes, permRes] = await Promise.allSettled([
+      const [settingsRes, permRes, digestRes] = await Promise.allSettled([
         c.rpc('get_dispatch_settings', { p_user_id: this.content.userId }),
         c.rpc('has_permission', { p_user_id: this.content.userId, p_permission_key: 'platform.settings.manage', p_scope_type: 'global', p_scope_id: null }),
+        c.rpc('get_digest_settings', { p_user_id: this.content.userId }),
       ]);
       if (settingsRes.status === 'fulfilled' && settingsRes.value) {
         this.settings = settingsRes.value;
@@ -271,7 +422,42 @@ export default {
         this.error = settingsRes.reason?.message || 'Failed to load settings';
       }
       if (permRes.status === 'fulfilled') this.canEdit = !!(permRes.value);
+      if (digestRes.status === 'fulfilled' && digestRes.value) {
+        this.digestSettings = digestRes.value;
+        this.applyDigestToForm(digestRes.value);
+      }
       this.loading = false;
+    },
+
+    applyDigestToForm(s) {
+      this.digestForm.daily_enabled   = !!(s['digest.daily_enabled']?.value   ?? true);
+      this.digestForm.weekly_enabled  = !!(s['digest.weekly_enabled']?.value  ?? false);
+      this.digestForm.monthly_enabled = !!(s['digest.monthly_enabled']?.value ?? false);
+      this.digestForm.webhook_daily   = s['notif_webhook_order_digest']?.value     || '';
+      this.digestForm.webhook_weekly  = s['notif_webhook_weekly_digest']?.value    || '';
+      this.digestForm.webhook_monthly = s['notif_webhook_monthly_digest']?.value   || '';
+    },
+
+    async saveDigestSetting(key, value) {
+      if (!this.canEdit) return;
+      this.savingKey   = key;
+      this.digestError = null;
+      try {
+        const result = await this.client().rpc('update_digest_settings', {
+          p_user_id: this.content.userId,
+          p_key:     key,
+          p_value:   value === null || value === '' ? null : JSON.parse(JSON.stringify(value)),
+        });
+        // Refresh local digestSettings cache so timestamps update
+        if (result) this.digestSettings[key] = result;
+        this.showToast('Saved');
+        this.$emit('trigger-event', { name: 'digest:saved', event: { key, value } });
+      } catch (e) {
+        this.digestError = e.message || 'Save failed';
+        this.$emit('trigger-event', { name: 'digest:error', event: { message: this.digestError } });
+      } finally {
+        this.savingKey = null;
+      }
     },
 
     applyToForm(settings) {
@@ -496,4 +682,55 @@ export default {
   animation: spread-ds-spin 0.6s linear infinite; flex-shrink: 0;
 }
 @keyframes spread-ds-spin { to { transform: rotate(360deg); } }
+
+/* Full-width card variant (digest card spans all columns) */
+@media (min-width: 768px) {
+  .spread-ds__card--full { grid-column: 1 / -1; }
+}
+
+/* Digest rows */
+.spread-ds__digest-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--spread-border);
+}
+.spread-ds__digest-row:first-of-type { padding-top: 4px; }
+.spread-ds__digest-row-left { display: flex; align-items: center; gap: 12px; }
+.spread-ds__digest-label { display: flex; flex-direction: column; gap: 2px; }
+.spread-ds__digest-period { font-size: 13.5px; font-weight: 600; color: var(--spread-dark-grey); }
+.spread-ds__digest-hint { font-size: 11.5px; color: var(--spread-light-grey); }
+.spread-ds__digest-webhook {
+  padding: 10px 0 14px 0; border-bottom: 1px solid var(--spread-border);
+}
+
+/* Toggle switch — pill style */
+.spread-ds__toggle-wrap {
+  position: relative; display: inline-flex; align-items: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.spread-ds__toggle-wrap[disabled],
+.spread-ds__toggle-input:disabled + .spread-ds__toggle-pill { opacity: 0.5; cursor: not-allowed; }
+.spread-ds__toggle-input {
+  position: absolute; width: 1px; height: 1px;
+  opacity: 0; pointer-events: none;
+}
+.spread-ds__toggle-pill {
+  width: 40px; height: 22px; background: var(--spread-border);
+  border-radius: 999px; transition: background 0.2s ease;
+  display: flex; align-items: center; padding: 2px;
+  flex-shrink: 0;
+}
+.spread-ds__toggle-pill::after {
+  content: ''; width: 18px; height: 18px; background: #fff;
+  border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+.spread-ds__toggle-input:checked + .spread-ds__toggle-pill {
+  background: var(--spread-accent);
+}
+.spread-ds__toggle-input:checked + .spread-ds__toggle-pill::after {
+  transform: translateX(18px);
+}
+.spread-ds__toggle-input:focus-visible + .spread-ds__toggle-pill {
+  outline: 2px solid var(--spread-accent); outline-offset: 2px;
+}
 </style>
