@@ -760,5 +760,11 @@ export default {
 .spread-ds__toggle-input:focus-visible + .spread-ds__toggle-pill {
   outline: 2px solid var(--spread-accent); outline-offset: 2px;
 }
+@media (max-width: 479px) {
+  .spread-ds { padding: 12px; }
+}
+@media (min-width: 1280px) {
+  .spread-ds { padding: 28px 40px; }
+}
 @keyframes spread-perm-spin { to { transform: rotate(360deg); } }
 </style>
